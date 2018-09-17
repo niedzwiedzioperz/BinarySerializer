@@ -1,21 +1,61 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace BinarySerializer
 {
     public class BinarySerializer
     {
+        private readonly SerializerCollection _serializerCollection;
+        private readonly DeserializerCollection _deserializerCollection;
+
+        public BinarySerializer(
+            ISerializerFactory serializerFactory,
+            IDeserializerFactory deserializerFactory)
+        {
+            if (serializerFactory == null)
+                throw new ArgumentNullException(nameof(serializerFactory));
+            if (deserializerFactory == null)
+                throw new ArgumentNullException(nameof(deserializerFactory));
+
+            _serializerCollection = new SerializerCollection(serializerFactory);
+            _deserializerCollection = new DeserializerCollection(deserializerFactory);
+        }
+
         public byte[] Serialize(object @object)
         {
-            return null;
+            using (var ms = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(ms))
+                {
+                    var context = NewContext(writer);
+
+                    ((ISerializationContext)context).Writer.Write(@object);
+                }
+
+                return ms.GetBuffer();
+            }
         }
 
         public object Deserialize(byte[] bytes, Type objectType)
         {
-            return null;
+            using (var ms = new MemoryStream(bytes))
+            {
+                using (var reader = new BinaryReader(ms))
+                {
+                    var context = NewContext(reader);
+
+                    return ((IDeserializationContext)context).Reader.Read(objectType);
+                }
+            }
         }
+
+        private SerializationContext NewContext(BinaryWriter writer)
+            => new SerializationContext(writer, _serializerCollection);
+
+        private DeserializationContext NewContext(BinaryReader reader)
+            => new DeserializationContext(reader, _deserializerCollection);
+
+        public static BinarySerializer Create()
+            => new BinarySerializer(null, null);
     }
 }

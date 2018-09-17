@@ -149,7 +149,7 @@ namespace BinarySerializer.Tests
         private void SerializeSingleValue_Test<TValue>(TValue value)
         {
             var @object = new SingleValue<TValue>(value);
-            var serializer = new BinarySerializer();
+            var serializer = BinarySerializer.Create();
 
             var bytes = serializer.Serialize(@object);
             var deserialized = serializer.Deserialize(bytes, @object.GetType()) as SingleValue<TValue>;

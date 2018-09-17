@@ -42,6 +42,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinarySerializer.cs" />
+    <Compile Include="DelegatingObjectDeserializer.cs" />
+    <Compile Include="DeserializationContext.cs" />
+    <Compile Include="IDeserializerFactory.cs" />
+    <Compile Include="ISerializerFactory.cs" />
+    <Compile Include="ObjectDeserializer.cs" />
+    <Compile Include="DeserializerCollection.cs" />
+    <Compile Include="SerializationContext.cs" />
+    <Compile Include="SerializerCollection.cs" />
+    <Compile Include="DelegatingObjectSerializer.cs" />
+    <Compile Include="IDeserializationContext.cs" />
+    <Compile Include="IReader.cs" />
+    <Compile Include="ISerializationContext.cs" />
+    <Compile Include="IWriter.cs" />
+    <Compile Include="ObjectSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
