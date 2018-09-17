@@ -1,4 +1,4 @@
-﻿namespace BinarySerializer
+﻿namespace BinarySerializer.Serialization
 {
     public abstract class ObjectSerializer
     {

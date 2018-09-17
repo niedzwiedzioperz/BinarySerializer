@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BinarySerializer.Deserialization;
+using BinarySerializer.Serialization;
+using System;
 using System.IO;
 
 namespace BinarySerializer

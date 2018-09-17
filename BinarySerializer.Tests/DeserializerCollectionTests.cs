@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BinarySerializer.Deserialization;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace BinarySerializer
+namespace BinarySerializer.Serialization
 {
     public class SerializationContext : ISerializationContext, IWriter
     {

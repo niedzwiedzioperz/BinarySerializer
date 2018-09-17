@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace BinarySerializer
+namespace BinarySerializer.Deserialization
 {
     public class DeserializationContext : IDeserializationContext, IReader
     {

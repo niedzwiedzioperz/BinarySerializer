@@ -1,4 +1,4 @@
-﻿namespace BinarySerializer
+﻿namespace BinarySerializer.Deserialization
 {
     public interface IDeserializationContext
     {

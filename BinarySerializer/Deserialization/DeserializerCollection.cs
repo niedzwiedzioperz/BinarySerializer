@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace BinarySerializer
+namespace BinarySerializer.Deserialization
 {
     public class DeserializerCollection
     {

@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace BinarySerializer
+namespace BinarySerializer.Serialization
 {
     public interface IWriter
     {

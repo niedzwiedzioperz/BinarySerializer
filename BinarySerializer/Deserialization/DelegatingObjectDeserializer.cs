@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BinarySerializer
+namespace BinarySerializer.Deserialization
 {
     public class DelegatingObjectDeserializer : ObjectDeserializer
     {
