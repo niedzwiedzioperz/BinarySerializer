@@ -29,9 +29,10 @@ namespace BinarySerializer
             {
                 using (var writer = new BinaryWriter(ms))
                 {
-                    var context = NewContext(writer);
+                    var objectWriter = new BinaryObjectWriter(writer);
+                    var context = NewContext(objectWriter);
 
-                    ((ISerializationContext)context).Writer.Write(@object);
+                    context.Write(@object);
                 }
 
                 return ms.GetBuffer();
@@ -51,8 +52,8 @@ namespace BinarySerializer
             }
         }
 
-        private SerializationContext NewContext(BinaryWriter writer)
-            => new SerializationContext(writer, _serializerCollection);
+        private SerializationContext NewContext(IWriter writer)
+            => new SerializationContext(_serializerCollection, writer);
 
         private DeserializationContext NewContext(BinaryReader reader)
             => new DeserializationContext(reader, _deserializerCollection);

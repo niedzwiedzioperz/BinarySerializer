@@ -146,6 +146,18 @@ namespace BinarySerializer.Tests
         public void SerializeNullableDecimal_NotNull_Test()
             => SerializeSingleValue_Test((decimal?)5.55);
 
+        [TestMethod]
+        public void SerializeChar_Test()
+            => SerializeSingleValue_Test('c');
+
+        [TestMethod]
+        public void SerializeNullableChar_Null_Test()
+            => SerializeSingleValue_Test((char?)null);
+
+        [TestMethod]
+        public void SerializeNullableChar_NotNull_Test()
+            => SerializeSingleValue_Test((char?)'c');
+
         private void SerializeSingleValue_Test<TValue>(TValue value)
         {
             var @object = new SingleValue<TValue>(value);

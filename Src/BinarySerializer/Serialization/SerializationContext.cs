@@ -1,37 +1,29 @@
 ﻿using System;
-using System.IO;
 
 namespace BinarySerializer.Serialization
 {
-    public class SerializationContext : ISerializationContext, IWriter
+    public class SerializationContext : ISerializationContext
     {
-        private readonly BinaryWriter _binaryWriter;
         private readonly SerializerCollection _serializerCollection;
 
         public SerializationContext(
-            BinaryWriter binaryWriter,
-            SerializerCollection serializerCollection)
+            SerializerCollection serializerCollection,
+            IWriter writer)
         {
-            if (binaryWriter == null)
-                throw new ArgumentNullException(nameof(binaryWriter));
             if (serializerCollection == null)
                 throw new ArgumentNullException(nameof(serializerCollection));
+            if (writer == null)
+                throw new ArgumentNullException(nameof(writer));
 
-            _binaryWriter = binaryWriter;
             _serializerCollection = serializerCollection;
+            Writer = writer;
         }
 
         #region ISerializationContext
 
-        IWriter ISerializationContext.Writer => this;
+        public IWriter Writer { get; }
 
-        #endregion
-
-        #region IWriter
-
-        BinaryWriter IWriter.Writer => _binaryWriter;
-
-        void IWriter.Write(object @object)
+        public void Write(object @object)
         {
             var serializer = _serializerCollection.Get(@object.GetType(), this);
 
