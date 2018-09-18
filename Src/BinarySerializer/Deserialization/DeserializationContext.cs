@@ -1,37 +1,29 @@
 ﻿using System;
-using System.IO;
 
 namespace BinarySerializer.Deserialization
 {
-    public class DeserializationContext : IDeserializationContext, IReader
+    public class DeserializationContext : IDeserializationContext
     {
-        private readonly BinaryReader _binaryReader;
         private readonly DeserializerCollection _deserializerCollection;
 
         public DeserializationContext(
-            BinaryReader binaryReader,
-            DeserializerCollection deserializerCollection)
+            DeserializerCollection deserializerCollection,
+            IReader reader)
         {
-            if (binaryReader == null)
-                throw new ArgumentNullException(nameof(binaryReader));
             if (deserializerCollection == null)
                 throw new ArgumentNullException(nameof(deserializerCollection));
+            if (reader == null)
+                throw new ArgumentNullException(nameof(reader));
 
-            _binaryReader = binaryReader;
             _deserializerCollection = deserializerCollection;
+            Reader = reader;
         }
 
         #region IDeserializationContext
 
-        IReader IDeserializationContext.Reader => this;
+        public IReader Reader { get; }
 
-        #endregion
-
-        #region IReader
-
-        BinaryReader IReader.Reader => _binaryReader;
-
-        object IReader.Read(Type objectType)
+        public object Read(Type objectType)
         {
             var deserializer = _deserializerCollection.Get(objectType, this);
 

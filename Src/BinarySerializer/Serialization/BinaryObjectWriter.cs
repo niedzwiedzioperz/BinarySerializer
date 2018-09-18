@@ -52,7 +52,7 @@ namespace BinarySerializer.Serialization
         {
             Write(value != null);
             if (value != null)
-                Write(value);
+                _writer.Write(value);
         }
 
         public void Write(decimal? value)

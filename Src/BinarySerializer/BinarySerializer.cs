@@ -45,9 +45,10 @@ namespace BinarySerializer
             {
                 using (var reader = new BinaryReader(ms))
                 {
-                    var context = NewContext(reader);
+                    var objectReader = new BinaryObjectReader(reader);
+                    var context = NewContext(objectReader);
 
-                    return ((IDeserializationContext)context).Reader.Read(objectType);
+                    return context.Read(objectType);
                 }
             }
         }
@@ -55,10 +56,12 @@ namespace BinarySerializer
         private SerializationContext NewContext(IWriter writer)
             => new SerializationContext(_serializerCollection, writer);
 
-        private DeserializationContext NewContext(BinaryReader reader)
-            => new DeserializationContext(reader, _deserializerCollection);
+        private DeserializationContext NewContext(IReader reader)
+            => new DeserializationContext(_deserializerCollection, reader);
 
         public static BinarySerializer Create()
-            => new BinarySerializer(null, null);
+            => new BinarySerializer(
+                new ILSerializerFactory(),
+                new ILDeserializerFactory());
     }
 }

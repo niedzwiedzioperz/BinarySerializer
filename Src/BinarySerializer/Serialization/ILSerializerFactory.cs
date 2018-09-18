@@ -21,8 +21,15 @@ namespace BinarySerializer.Serialization
             .GetMethods(BindingFlags.Instance | BindingFlags.Public)
             .ToDictionary(m => m.GetParameters().Last().ParameterType);
 
+        #region ISerializerFactory
+
         public ObjectSerializer Create(Type objectType, ISerializationContext context)
         {
+            if (objectType == null)
+                throw new ArgumentNullException(nameof(objectType));
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+
             var method = CreateMethod(objectType);
             var il = method.GetILGenerator();
 
@@ -36,6 +43,8 @@ namespace BinarySerializer.Serialization
             var serializer = method.CreateDelegate(_serializerDelegateType) as Action<object, ISerializationContext>;
             return new DelegatingObjectSerializer(serializer);
         }
+
+        #endregion
 
         private static void SerializeProperties(ILGenerator il, LocalBuilder objectVar, LocalBuilder writerVar, Type objectType)
         {

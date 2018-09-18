@@ -42,9 +42,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinarySerializer.cs" />
+    <Compile Include="Deserialization\BinaryObjectReader.cs" />
     <Compile Include="Deserialization\DelegatingObjectDeserializer.cs" />
     <Compile Include="Deserialization\DeserializationContext.cs" />
     <Compile Include="Deserialization\IDeserializerFactory.cs" />
+    <Compile Include="Deserialization\ILDeserializerFactory.cs" />
     <Compile Include="SerializationHelper.cs" />
     <Compile Include="Serialization\ILSerializerFactory.cs" />
     <Compile Include="Serialization\ISerializerFactory.cs" />
