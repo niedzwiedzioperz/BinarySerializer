@@ -45,21 +45,6 @@ namespace BinarySerializer.Deserialization
             return new DelegatingObjectDeserializer(serializer);
         }
 
-        private class X
-        {
-            public int? XX { get; set; }
-        }
-
-        public object Deserialize(IDeserializationContext ctx)
-        {
-            var obj = new X();
-            var reader = ctx.Reader;
-
-            obj.XX = reader.ReadNullableInt();
-
-            return obj;
-        }
-
         #endregion
 
         private static void DeserializeProperties(ILGenerator il, LocalBuilder objectVar, LocalBuilder readerVar, Type objectType)
