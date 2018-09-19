@@ -158,6 +158,54 @@ namespace BinarySerializer.Tests
         public void SerializeNullableChar_NotNull_Test()
             => SerializeSingleValue_Test((char?)'c');
 
+        [TestMethod]
+        public void SerializeByteEnum_Test()
+            => SerializeSingleValue_Test(ByteEnum.Value);
+
+        [TestMethod]
+        public void SerializeNullableByteEnum_Null_Test()
+            => SerializeSingleValue_Test((ByteEnum?)null);
+
+        [TestMethod]
+        public void SerializeNullableByteEnum_NotNull_Test()
+            => SerializeSingleValue_Test((ByteEnum?)ByteEnum.Value);
+
+        [TestMethod]
+        public void SerializeShortEnum_Test()
+            => SerializeSingleValue_Test(ShortEnum.Value);
+
+        [TestMethod]
+        public void SerializeNullableShortEnum_Null_Test()
+            => SerializeSingleValue_Test((ShortEnum?)null);
+
+        [TestMethod]
+        public void SerializeNullableShortEnum_NotNull_Test()
+            => SerializeSingleValue_Test((ShortEnum?)ShortEnum.Value);
+
+        [TestMethod]
+        public void SerializeIntEnum_Test()
+            => SerializeSingleValue_Test(IntEnum.Value);
+
+        [TestMethod]
+        public void SerializeNullableIntEnum_Null_Test()
+            => SerializeSingleValue_Test((IntEnum?)null);
+
+        [TestMethod]
+        public void SerializeNullableIntEnum_NotNull_Test()
+            => SerializeSingleValue_Test((IntEnum?)IntEnum.Value);
+
+        [TestMethod]
+        public void SerializeLongEnum_Test()
+            => SerializeSingleValue_Test(LongEnum.Value);
+
+        [TestMethod]
+        public void SerializeNullableLongEnum_Null_Test()
+            => SerializeSingleValue_Test((LongEnum?)null);
+
+        [TestMethod]
+        public void SerializeNullableLongEnum_NotNull_Test()
+            => SerializeSingleValue_Test((LongEnum?)LongEnum.Value);
+
         private void SerializeSingleValue_Test<TValue>(TValue value)
         {
             var @object = new SingleValue<TValue>(value);

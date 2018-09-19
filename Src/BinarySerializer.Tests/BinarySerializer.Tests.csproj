@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeserializerCollectionTests.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="ILDeserializerFactoryTests.cs" />
     <Compile Include="ILSerializerFactoryTests.cs" />
     <Compile Include="SerializerCollectionTests.cs" />

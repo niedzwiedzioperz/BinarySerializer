@@ -192,6 +192,110 @@ namespace BinarySerializer.Tests
             mock.Verify(w => w.Write(value));
         }
 
+        [TestMethod]
+        public void WriteByteEnum_Test()
+        {
+            var value = ByteEnum.Value;
+            var mock = SingleValueTest(value);
+            mock.Verify(w => w.Write((byte)value));
+        }
+
+        [TestMethod]
+        public void WriteNullableByteEnum_Null_Test()
+        {
+            var value = (ByteEnum?)null;
+            var mock = SingleValueTest(value);
+            mock.Verify(w => w.Write(false));
+            mock.VerifyNoOtherCalls();
+        }
+
+        [TestMethod]
+        public void WriteNullableByteEnum_NotNull_Test()
+        {
+            var value = (ByteEnum?)ByteEnum.Value;
+            var mock = SingleValueTest(value);
+            mock.Verify(w => w.Write(true));
+            mock.Verify(w => w.Write((byte)value.Value));
+        }
+
+        [TestMethod]
+        public void WriteShortEnum_Test()
+        {
+            var value = ShortEnum.Value;
+            var mock = SingleValueTest(value);
+            mock.Verify(w => w.Write((short)value));
+        }
+
+        [TestMethod]
+        public void WriteNullableShortEnum_Null_Test()
+        {
+            var value = (ShortEnum?)null;
+            var mock = SingleValueTest(value);
+            mock.Verify(w => w.Write(false));
+            mock.VerifyNoOtherCalls();
+        }
+
+        [TestMethod]
+        public void WriteNullableShortEnum_NotNull_Test()
+        {
+            var value = (ShortEnum?)ShortEnum.Value;
+            var mock = SingleValueTest(value);
+            mock.Verify(w => w.Write(true));
+            mock.Verify(w => w.Write((short)value.Value));
+        }
+
+        [TestMethod]
+        public void WriteIntEnum_Test()
+        {
+            var value = IntEnum.Value;
+            var mock = SingleValueTest(value);
+            mock.Verify(w => w.Write((int)value));
+        }
+
+        [TestMethod]
+        public void WriteNullableIntEnum_Null_Test()
+        {
+            var value = (IntEnum?)null;
+            var mock = SingleValueTest(value);
+            mock.Verify(w => w.Write(false));
+            mock.VerifyNoOtherCalls();
+        }
+
+        [TestMethod]
+        public void WriteNullableIntEnum_NotNull_Test()
+        {
+            var value = (IntEnum?)IntEnum.Value;
+            var mock = SingleValueTest(value);
+            mock.Verify(w => w.Write(true));
+            mock.Verify(w => w.Write((int)value.Value));
+        }
+
+        [TestMethod]
+        public void WriteLongEnum_Test()
+        {
+            var value = LongEnum.Value;
+            var mock = SingleValueTest(value);
+            mock.Verify(w => w.Write((long)value));
+        }
+
+        [TestMethod]
+        public void WriteNullableLongEnum_Null_Test()
+        {
+            var value = (LongEnum?)null;
+            var mock = SingleValueTest(value);
+            mock.Verify(w => w.Write(false));
+            mock.VerifyNoOtherCalls();
+        }
+
+        [TestMethod]
+        public void WriteNullableLongEnum_NotNull_Test()
+        {
+            var value = (LongEnum?)LongEnum.Value;
+            var mock = SingleValueTest(value);
+            mock.Verify(w => w.Write(true));
+            mock.Verify(w => w.Write((long)value.Value));
+        }
+
         private Mock<IWriter> SingleValueTest<T>(T value)
         {
             var obj = new SingleValue<T>(value);

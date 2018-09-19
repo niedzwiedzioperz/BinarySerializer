@@ -51,16 +51,49 @@ namespace BinarySerializer.Deserialization
         {
             var properties = SerializationHelper.GetSerializableProperties(objectType);
 
-            MethodInfo readerMethod;
             foreach (var property in properties)
             {
-                if (_readMethods.TryGetValue(property.PropertyType, out readerMethod))
-                {
-                    il.Emit(OpCodes.Ldloc, objectVar);
-                    il.Emit(OpCodes.Ldloc, readerVar);
-                    il.EmitCall(OpCodes.Callvirt, readerMethod, null);
-                    il.EmitCall(OpCodes.Callvirt, property.SetMethod, null);
-                }
+                if (SerializationHelper.IsEnumProperty(property))
+                    DeserializeEnumProperty(il, objectVar, readerVar, property);
+                else
+                    DeserializeValueProperty(il, objectVar, readerVar, property);
+            }
+        }
+
+        private static void DeserializeEnumProperty(ILGenerator il, LocalBuilder objectVar, LocalBuilder readerVar, PropertyInfo property)
+        {
+            var isNullable = Nullable.GetUnderlyingType(property.PropertyType) != null;
+            if (isNullable)
+            {
+                var skipReadLabel = il.DefineLabel();
+                var underlyingType = Enum.GetUnderlyingType(Nullable.GetUnderlyingType(property.PropertyType));
+                var ctor = property.PropertyType.GetConstructors(BindingFlags.Instance | BindingFlags.Public).Where(c => c.GetParameters().Length == 1).Single();
+
+                il.Emit(OpCodes.Ldloc, readerVar);
+                il.EmitCall(OpCodes.Callvirt, _readMethods[typeof(bool)], null);
+                il.Emit(OpCodes.Brfalse_S, skipReadLabel);
+
+                il.Emit(OpCodes.Ldloc, objectVar);
+                il.Emit(OpCodes.Ldloc, readerVar);
+                il.EmitCall(OpCodes.Callvirt, _readMethods[underlyingType], null);
+                il.Emit(OpCodes.Newobj, ctor);
+                il.EmitCall(OpCodes.Callvirt, property.SetMethod, null);
+
+                il.MarkLabel(skipReadLabel);
+            }
+            else
+                DeserializeValueProperty(il, objectVar, readerVar, property);
+        }
+
+        private static void DeserializeValueProperty(ILGenerator il, LocalBuilder objectVar, LocalBuilder readerVar, PropertyInfo property)
+        {
+            var propertyType = GetPropertyType(property);
+            if (_readMethods.TryGetValue(propertyType, out MethodInfo readerMethod))
+            {
+                il.Emit(OpCodes.Ldloc, objectVar);
+                il.Emit(OpCodes.Ldloc, readerVar);
+                il.EmitCall(OpCodes.Callvirt, readerMethod, null);
+                il.EmitCall(OpCodes.Callvirt, property.SetMethod, null);
             }
         }
 
@@ -98,5 +131,8 @@ namespace BinarySerializer.Deserialization
             => objectType
             .GetConstructors(BindingFlags.Instance | BindingFlags.Public)
             .Single(c => c.GetParameters().Length == 0);
+
+        private static Type GetPropertyType(PropertyInfo property)
+            => SerializationHelper.IsEnumProperty(property) ? SerializationHelper.GetUnderlyingEnumType(property) : property.PropertyType;
     }
 }

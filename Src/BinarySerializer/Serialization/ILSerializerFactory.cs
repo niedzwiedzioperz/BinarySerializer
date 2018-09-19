@@ -10,6 +10,8 @@ namespace BinarySerializer.Serialization
     {
         private const string MethodName = "Serialize";
         private const string WriterPropertyName = "Writer";
+        private const string HasValuePropertyName = "HasValue";
+        private const string ValuePropertyName = "Value";
 
         private static readonly Type _serializerDelegateType = typeof(Action<object, ISerializationContext>);
         private static readonly MethodInfo _getWriterMI = 
@@ -50,16 +52,62 @@ namespace BinarySerializer.Serialization
         {
             var properties = SerializationHelper.GetSerializableProperties(objectType);
 
-            MethodInfo writerMethod;
             foreach (var property in properties)
             {
-                if (_writeMethods.TryGetValue(property.PropertyType, out writerMethod))
-                {
-                    il.Emit(OpCodes.Ldloc, writerVar);
-                    il.Emit(OpCodes.Ldloc, objectVar);
-                    il.EmitCall(OpCodes.Callvirt, property.GetMethod, null);
-                    il.EmitCall(OpCodes.Callvirt, writerMethod, null);
-                }
+                if (SerializationHelper.IsEnumProperty(property))
+                    SerializeEnumProperty(il, objectVar, writerVar, property);
+                else
+                    SerializeValueProperty(il, objectVar, writerVar, property);
+            }
+        }
+
+        private static void SerializeEnumProperty(ILGenerator il, LocalBuilder objectVar, LocalBuilder writerVar, PropertyInfo property)
+        {
+            var isNullable = Nullable.GetUnderlyingType(property.PropertyType) != null;
+            if (isNullable)
+            {
+                var hasValueProp = property.PropertyType.GetProperty(HasValuePropertyName, BindingFlags.Instance | BindingFlags.Public);
+                var valueProp = property.PropertyType.GetProperty(ValuePropertyName, BindingFlags.Instance | BindingFlags.Public);
+                var underlyingType = Enum.GetUnderlyingType(valueProp.PropertyType);
+
+                var valueVar = il.DeclareLocal(property.PropertyType);
+                var skipValueLabel = il.DefineLabel();
+
+                il.Emit(OpCodes.Ldloc, writerVar);
+                il.Emit(OpCodes.Ldloc, objectVar);
+                il.EmitCall(OpCodes.Callvirt, property.GetMethod, null);
+                il.Emit(OpCodes.Stloc, valueVar); //store property value as local
+
+                il.Emit(OpCodes.Ldloca, valueVar);
+                il.EmitCall(OpCodes.Call, hasValueProp.GetMethod, null);
+                il.EmitCall(OpCodes.Callvirt, _writeMethods[typeof(bool)], null); //write HasValue
+
+                il.Emit(OpCodes.Ldloca, valueVar);
+                il.EmitCall(OpCodes.Call, hasValueProp.GetMethod, null);
+                il.Emit(OpCodes.Brfalse_S, skipValueLabel);
+
+                il.Emit(OpCodes.Ldloc, writerVar);
+                il.Emit(OpCodes.Ldloca, valueVar);
+                il.EmitCall(OpCodes.Call, valueProp.GetMethod, null);
+                il.EmitCall(OpCodes.Callvirt, _writeMethods[underlyingType], null); //if HasValue then write Value
+
+                il.MarkLabel(skipValueLabel);
+            }
+            else
+            {
+                SerializeValueProperty(il, objectVar, writerVar, property);
+            }
+        }
+
+        private static void SerializeValueProperty(ILGenerator il, LocalBuilder objectVar, LocalBuilder writerVar, PropertyInfo property)
+        {
+            var propretyType = GetPropertyType(property);
+            if (_writeMethods.TryGetValue(propretyType, out MethodInfo writerMethod))
+            {
+                il.Emit(OpCodes.Ldloc, writerVar);
+                il.Emit(OpCodes.Ldloc, objectVar);
+                il.EmitCall(OpCodes.Callvirt, property.GetMethod, null);
+                il.EmitCall(OpCodes.Callvirt, writerMethod, null);
             }
         }
 
@@ -91,5 +139,8 @@ namespace BinarySerializer.Serialization
 
             return writerVar;
         }
+
+        private static Type GetPropertyType(PropertyInfo property)
+            => SerializationHelper.IsEnumProperty(property) ? SerializationHelper.GetUnderlyingEnumType(property) : property.PropertyType;
     }
 }
